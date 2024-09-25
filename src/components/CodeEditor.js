@@ -5,20 +5,20 @@ import axios from 'axios';
 
 const ErrorModal = ({ show, handleClose, error }) => {
     if (!show) return null;
-  
+
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-        <div className="bg-white p-4 rounded shadow-md w-1/3">
-          <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
-          <p>{error.message}</p>
-          {error.data && <p className="text-sm text-gray-600">Response: {error.data}</p>}
-          <div className="mt-4 flex justify-end">
-            <button onClick={handleClose} className="px-4 py-2 bg-red-500 text-white rounded">Close</button>
-          </div>
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div className="bg-white p-4 rounded shadow-md w-1/3">
+                <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
+                <p>{error.message}</p>
+                {error.data && <p className="text-sm text-gray-600">Response: {error.data}</p>}
+                <div className="mt-4 flex justify-end">
+                    <button onClick={handleClose} className="px-4 py-2 bg-red-500 text-white rounded">Close</button>
+                </div>
+            </div>
         </div>
-      </div>
     );
-  };
+};
 
 const CodeEditor = () => {
   const [html, setHtml] = useState('<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>');

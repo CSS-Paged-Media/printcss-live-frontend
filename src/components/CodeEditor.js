@@ -12,6 +12,8 @@ const CodeEditor = () => {
   const [activeTab, setActiveTab] = useState('html');
   const [activeRenderingTab, setActiveRenderingTab] = useState('preview');
   const [pdfUrl, setPdfUrl] = useState(null);
+  const [tools, setTools] = useState([]);
+  const [selectedTool, setSelectedTool] = useState('weasyprint');
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -24,6 +26,8 @@ const CodeEditor = () => {
     const timer = setTimeout(() => {
       updatePreview();
     }, 100);
+
+    fetchSupportedTools();
 
     return () => clearTimeout(timer);
   }, []);
@@ -68,6 +72,15 @@ const CodeEditor = () => {
     }
   };
 
+  const fetchSupportedTools = async () => {
+    try {
+      const response = await axios.get('http://localhost:5000/supported_tools');
+      setTools(response.data);
+    } catch (error) {
+      console.error('Error fetching supported tools:', error);
+    }
+  };
+
   const generatePdf = async () => {
     const inputHtml = `
       <!DOCTYPE html>
@@ -86,7 +99,7 @@ const CodeEditor = () => {
       const formData = new FormData();
       const blob = new Blob([inputHtml], { type: 'text/html' });
       formData.append('input_file', blob);
-      formData.append('tool', 'weasyprint');
+      formData.append('tool', selectedTool);
 
       // Send request to backend for PDF generation
       const response = await axios.post('http://localhost:5000/generate_pdf', formData, {
@@ -170,6 +183,20 @@ const CodeEditor = () => {
                 >
                     PDF
                 </button>
+                {/* Dropdown for tool selection */}
+                {activeRenderingTab === 'pdf' && pdfUrl && (
+                    <select
+                    value={selectedTool}
+                    onChange={(e) => setSelectedTool(e.target.value)}
+                    className="ml-2 p-1 bg-gray-600 text-white rounded"
+                    >
+                    {tools.map(tool => (
+                        <option key={tool} value={tool}>
+                        {tool}
+                        </option>
+                    ))}
+                    </select>
+                )}
               </div>
               <button className="reload p-1" onClick={updatePreview}>
                 <i className="bi bi-arrow-clockwise"></i> Reload

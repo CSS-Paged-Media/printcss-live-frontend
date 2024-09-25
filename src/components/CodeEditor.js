@@ -8,6 +8,7 @@ const CodeEditor = () => {
   const [js, setJs] = useState('/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/');
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
+  const [activeRenderingTab, setActiveRenderingTab] = useState('preview');
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -113,7 +114,22 @@ const CodeEditor = () => {
         {!isFullscreen && (
           <div className="w-1/2 flex flex-col">
             <div className="flex bg-gray-700 items-center justify-between px-4">
-              <span className="py-2 bg-gray-700">Preview <i>powered by paged.js</i></span>
+              <div>          
+                <button
+                    key="preview"
+                    className={`px-4 py-2 ${activeRenderingTab === 'preview' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    onClick={() => setActiveRenderingTab('preview')}
+                >
+                    Preview
+                </button>
+                <button
+                    key="pdf"
+                    className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    onClick={() => setActiveRenderingTab('pdf')}
+                >
+                    PDF
+                </button>
+              </div>
               <button className="reload p-1" onClick={updatePreview}>
                 <i className="bi bi-arrow-clockwise"></i> Reload
               </button>
@@ -122,7 +138,7 @@ const CodeEditor = () => {
               <iframe
                 ref={previewRef}
                 title="preview"
-                className="w-full h-full bg-white border-none"
+                className={`w-full h-full bg-white border-none ${activeRenderingTab !== 'preview' ? 'hidden' : ''}`}
               />
             </div>
           </div>

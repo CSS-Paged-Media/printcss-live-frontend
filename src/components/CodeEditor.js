@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import axios from 'axios';
+import { Document, Page } from 'react-pdf';
 
 const CodeEditor = () => {
   const [html, setHtml] = useState('<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>');
@@ -9,6 +11,7 @@ const CodeEditor = () => {
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
   const [activeRenderingTab, setActiveRenderingTab] = useState('preview');
+  const [pdfUrl, setPdfUrl] = useState(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   useEffect(() => {
@@ -62,6 +65,41 @@ const CodeEditor = () => {
         previewDocument.head.appendChild(cssLink);
         previewDocument.head.appendChild(jsLink);
       }, 0);
+    }
+  };
+
+  const generatePdf = async () => {
+    const inputHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <style>${css}</style>
+        </head>
+        <body>
+          ${html}
+          <script>${js}</script>
+        </body>
+      </html>
+    `;
+    
+    try {
+      const formData = new FormData();
+      const blob = new Blob([inputHtml], { type: 'text/html' });
+      formData.append('input_file', blob);
+      formData.append('tool', 'weasyprint');
+
+      // Send request to backend for PDF generation
+      const response = await axios.post('http://localhost:5000/generate_pdf', formData, {
+        responseType: 'blob',
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      // Create a URL for the generated PDF
+      const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
+      const pdfUrl = URL.createObjectURL(pdfBlob);
+      setPdfUrl(pdfUrl);  // Set the PDF URL to the state
+    } catch (error) {
+      console.error('Error generating PDF:', error);
     }
   };
 
@@ -125,7 +163,10 @@ const CodeEditor = () => {
                 <button
                     key="pdf"
                     className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
-                    onClick={() => setActiveRenderingTab('pdf')}
+                    onClick={() => {
+                        setActiveRenderingTab('pdf');
+                        generatePdf();  // Generate PDF on clicking the PDF tab
+                    }}
                 >
                     PDF
                 </button>
@@ -135,11 +176,20 @@ const CodeEditor = () => {
               </button>
             </div>
             <div className="flex-1 p-4">
-              <iframe
-                ref={previewRef}
-                title="preview"
-                className={`w-full h-full bg-white border-none ${activeRenderingTab !== 'preview' ? 'hidden' : ''}`}
-              />
+              {activeRenderingTab === 'preview' && (
+                <iframe
+                  ref={previewRef}
+                  title="preview"
+                  className="w-full h-full bg-white border-none"
+                />
+              )}
+              {activeRenderingTab === 'pdf' && pdfUrl && (
+                <iframe
+                  src={pdfUrl}
+                  title="pdf-viewer"
+                  className="w-full h-full bg-white border-none"
+                />
+              )}
             </div>
           </div>
         )}

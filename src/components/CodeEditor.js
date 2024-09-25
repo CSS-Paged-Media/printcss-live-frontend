@@ -14,6 +14,16 @@ const CodeEditor = () => {
     updatePreview();
   }, [html, css, js, isFullscreen]);
 
+  // New effect to reload preview on app load
+  useEffect(() => {
+    // Short timeout to ensure the app is fully rendered
+    const timer = setTimeout(() => {
+      updatePreview();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   const updatePreview = () => {
     if (previewRef.current) {
       const previewDocument = previewRef.current.contentDocument;

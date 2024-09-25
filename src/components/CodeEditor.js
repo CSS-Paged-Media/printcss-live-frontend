@@ -3,9 +3,9 @@ import Editor from '@monaco-editor/react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const CodeEditor = () => {
-  const [html, setHtml] = useState('Enter your HTML here');
-  const [css, setCss] = useState('@page{ margin: 2cm; }');
-  const [js, setJs] = useState('// Enter your JavaScript here');
+  const [html, setHtml] = useState('<div class="break"></div><span class="head"><b>Max Mustermann</b><br />a fancy and long title</span><br />max.mustermann@example.com<br />Mobile +49 123 4567 8901<br />www.example.com<br /><span class="foot">Example Company<br />Busystreet 5 &middot; 00001 Gotham</span>');
+  const [css, setCss] = useState('@page{size:3.5in 2in;marks:crop;bleed:0.125in;margin:0.25in;} @page:first{background:rgb(188, 11, 6);background-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);background-position: center;background-repeat: no-repeat;margin:0;}body{font-size:10pt;}b{color:rgb(188, 11, 6);font-size:1.5rem;}.head{display:inline-block;margin-bottom: .5rem;}.foot{display:inline-block;margin-top: .75rem;border-left:.25rem solid rgb(188, 11, 6);padding-left:.5rem;}.break{page-break-after: always;break-after: always;}');
+  const [js, setJs] = useState('/* Put your JavaScript here! But be aware that not all rendering tools are supporting JavaScript. */');
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -46,6 +46,13 @@ const CodeEditor = () => {
     setIsFullscreen(!isFullscreen);
   };
 
+  const handleEditorDidMount = (editor, monaco) => {
+    // Format the code immediately after the editor is mounted
+    setTimeout(() => {
+      editor.getAction('editor.action.formatDocument').run();
+    }, 100);
+  };
+
   const renderEditor = (type, value, setValue) => (
     <div className={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
       <Editor
@@ -55,6 +62,7 @@ const CodeEditor = () => {
         onChange={setValue}
         theme="vs-dark"
         options={{ minimap: { enabled: false } }}
+        onMount={handleEditorDidMount}
       />
     </div>
   );

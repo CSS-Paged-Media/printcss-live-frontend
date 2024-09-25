@@ -12,7 +12,7 @@ const CodeEditor = () => {
 
   useEffect(() => {
     updatePreview();
-  }, [html, css, js]);
+  }, [html, css, js, isFullscreen]);
 
   const updatePreview = () => {
     if (previewRef.current) {
@@ -89,14 +89,14 @@ const CodeEditor = () => {
       <div className="flex-1 flex">
         {editorSection}
         {!isFullscreen && (
-          <div className="w-1/2 p-4 flex flex-col">
-            <div className="box-heading flex justify-between items-center p-2">
-              <span>Preview <i>powered by paged.js</i></span>
+          <div className="w-1/2 flex flex-col">
+            <div className="flex bg-gray-700 items-center justify-between px-4">
+              <span className="py-2 bg-gray-700">Preview <i>powered by paged.js</i></span>
               <button className="reload p-1" onClick={updatePreview}>
                 <i className="bi bi-arrow-clockwise"></i> Reload
               </button>
             </div>
-            <div className="flex-1">
+            <div className="flex-1 p-4">
               <iframe
                 ref={previewRef}
                 title="preview"

@@ -20,6 +20,12 @@ const CodeEditor = () => {
     updatePreview();
   }, [html, css, js, isFullscreen]);
 
+  useEffect(() => {
+    if (activeRenderingTab === 'pdf') {
+      generatePdf();  // Re-generate the PDF whenever the tool is switched while in the PDF tab
+    }
+  }, [selectedTool, activeRenderingTab]);  // Trigger whenever tool or PDF tab changes
+
   // New effect to reload preview on app load
   useEffect(() => {
     // Short timeout to ensure the app is fully rendered

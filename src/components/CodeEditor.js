@@ -21,9 +21,7 @@ const CodeEditor = () => {
   }, [html, css, js, isFullscreen]);
 
   useEffect(() => {
-    if (activeRenderingTab === 'pdf') {
-      generatePdf();  // Re-generate the PDF whenever the tool is switched while in the PDF tab
-    }
+    reload();
   }, [selectedTool, activeRenderingTab]);  // Trigger whenever tool or PDF tab changes
 
   // New effect to reload preview on app load
@@ -37,6 +35,14 @@ const CodeEditor = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const reload = () => {
+    if (activeRenderingTab === 'pdf') {
+        generatePdf();
+    }else{
+        updatePreview();
+    }
+  };
 
   const updatePreview = () => {
     if (previewRef.current) {
@@ -204,7 +210,7 @@ const CodeEditor = () => {
                     </select>
                 )}
               </div>
-              <button className="reload p-1" onClick={updatePreview}>
+              <button className="reload p-1" onClick={reload}>
                 <i className="bi bi-arrow-clockwise"></i> Reload
               </button>
             </div>

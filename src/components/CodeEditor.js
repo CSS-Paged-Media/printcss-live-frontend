@@ -3,9 +3,9 @@ import Editor from '@monaco-editor/react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 
 const CodeEditor = () => {
-  const [html, setHtml] = useState('<div class="break"></div><span class="head"><b>Max Mustermann</b><br />a fancy and long title</span><br />max.mustermann@example.com<br />Mobile +49 123 4567 8901<br />www.example.com<br /><span class="foot">Example Company<br />Busystreet 5 &middot; 00001 Gotham</span>');
-  const [css, setCss] = useState('@page{size:3.5in 2in;marks:crop;bleed:0.125in;margin:0.25in;} @page:first{background:rgb(188, 11, 6);background-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);background-position: center;background-repeat: no-repeat;margin:0;}body{font-size:10pt;}b{color:rgb(188, 11, 6);font-size:1.5rem;}.head{display:inline-block;margin-bottom: .5rem;}.foot{display:inline-block;margin-top: .75rem;border-left:.25rem solid rgb(188, 11, 6);padding-left:.5rem;}.break{page-break-after: always;break-after: always;}');
-  const [js, setJs] = useState('/* Put your JavaScript here! But be aware that not all rendering tools are supporting JavaScript. */');
+  const [html, setHtml] = useState('<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>');
+  const [css, setCss] = useState('@page{\n\tsize:3.5in 2in;\n\tmarks:crop;\n\tbleed:0.125in;\n\tmargin:0.25in;\n} \n\n@page:first{\n\tbackground:rgb(188, 11, 6);\n\tbackground-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n\tmargin:0;\n}\n\nbody{\n\tfont-size:10pt;\n}\n\nb{\n\tcolor:rgb(188, 11, 6);\n\tfont-size:1.5rem;\n}\n\n.head{\n\tdisplay:inline-block;\n\tmargin-bottom: .5rem;\n}\n\n.foot{\n\tdisplay:inline-block;\n\tmargin-top: .75rem;\n\tborder-left:.25rem solid rgb(188, 11, 6);\n\tpadding-left:.5rem;\n}\n\n.break{\n\tpage-break-after: always;\n\tbreak-after: always;\n}');
+  const [js, setJs] = useState('/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/');
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -58,13 +58,6 @@ const CodeEditor = () => {
     setIsFullscreen(!isFullscreen);
   };
 
-  const handleEditorDidMount = (editor, monaco) => {
-    // Format the code immediately after the editor is mounted
-    setTimeout(() => {
-      editor.getAction('editor.action.formatDocument').run();
-    }, 100);
-  };
-
   const renderEditor = (type, value, setValue) => (
     <div className={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
       <Editor
@@ -74,7 +67,6 @@ const CodeEditor = () => {
         onChange={setValue}
         theme="vs-dark"
         options={{ minimap: { enabled: false } }}
-        onMount={handleEditorDidMount}
       />
     </div>
   );

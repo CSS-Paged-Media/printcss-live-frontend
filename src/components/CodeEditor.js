@@ -17,28 +17,40 @@ const CodeEditor = () => {
   const updatePreview = () => {
     if (previewRef.current) {
       const previewDocument = previewRef.current.contentDocument;
+      
+      // Clear the existing content
       previewDocument.open();
-      previewDocument.write(`
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <style>${css}</style>
-            <script src="./assets/scripts/paged.polyfill.js"></script>
-          </head>
-          <body>
-            ${html}
-            <script>${js}</script>
-            <script>
-              window.addEventListener('load', async () => {
-                await new Promise(resolve => setTimeout(resolve, 0));
-                const paged = new Paged.Previewer();
-                await paged.preview(document.body.innerHTML, []);
-              });
-            </script>
-          </body>
-        </html>
-      `);
+      previewDocument.write('');
       previewDocument.close();
+  
+      // Small delay to ensure clearing is complete
+      setTimeout(() => {
+        // Write new content
+        previewDocument.open();
+        previewDocument.write(`
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <style>${css}</style>
+            </head>
+            <body>
+              ${html}
+              <script>${js}</script>
+            </body>
+          </html>
+        `);
+        previewDocument.close();
+
+        var cssLink = document.createElement('link');
+        cssLink.href = '/assets/styles/interface.css'; 
+        cssLink.rel = 'stylesheet'; 
+        cssLink.type = 'text/css'; 
+        var jsLink = document.createElement('script');
+        jsLink.src = '/assets/scripts/paged.polyfill.js'; 
+
+        previewDocument.head.appendChild(cssLink);
+        previewDocument.head.appendChild(jsLink);
+      }, 0);
     }
   };
 

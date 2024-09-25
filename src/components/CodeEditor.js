@@ -137,7 +137,7 @@ const CodeEditor = () => {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-console.log(response);
+
       // If the response is not 200, handle the error
       if (response.status !== 200) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);

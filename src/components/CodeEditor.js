@@ -7,6 +7,7 @@ const CodeEditor = () => {
   const [css, setCss] = useState('@page{ margin: 2cm; }');
   const [js, setJs] = useState('// Enter your JavaScript here');
   const previewRef = useRef(null);
+  const [activeTab, setActiveTab] = useState('html');
   const [editorStates, setEditorStates] = useState({
     html: { collapsed: false, fullscreen: false },
     css: { collapsed: false, fullscreen: false },
@@ -56,7 +57,7 @@ const CodeEditor = () => {
   };
 
   const renderEditor = (type, value, setValue) => (
-    <div className={`flex-1 flex flex-col ${editorStates[type].fullscreen ? 'fixed inset-0 z-50 bg-gray-800' : ''}`}>
+    <div className={`flex-1 flex flex-col ${editorStates[type].fullscreen ? 'fixed inset-0 z-50 bg-gray-800' : ''} ${activeTab !== type ? 'hidden' : ''}`}>
       <div className="box-heading flex justify-between items-center p-2">
         <span>{type.toUpperCase()}</span>
         <div>
@@ -85,6 +86,17 @@ const CodeEditor = () => {
     <div className="flex flex-col h-screen bg-gray-800 text-white">
       <div className="flex-1 flex">
         <div className="w-1/2 flex flex-col">
+          <div className="flex bg-gray-700">
+            {['html', 'css', 'js'].map(tab => (
+              <button
+                key={tab}
+                className={`px-4 py-2 ${activeTab === tab ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                onClick={() => setActiveTab(tab)}
+              >
+                {tab.toUpperCase()}
+              </button>
+            ))}
+          </div>
           {renderEditor('html', html, setHtml)}
           {renderEditor('css', css, setCss)}
           {renderEditor('js', js, setJs)}

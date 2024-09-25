@@ -34,6 +34,7 @@ const CodeEditor = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorDetails, setErrorDetails] = useState({ status: '', message: '', data: '' });
   
+  const backendUrl = process.env.REACT_APP_PRINTCSS_BACKEND_URL;
 
   useEffect(() => {
     updatePreview();
@@ -105,7 +106,7 @@ const CodeEditor = () => {
 
   const fetchSupportedTools = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/supported_tools');
+      const response = await axios.get(`${backendUrl}/supported_tools`);
       setTools(response.data);
     } catch (error) {
       console.error('Error fetching supported tools:', error);
@@ -133,7 +134,7 @@ const CodeEditor = () => {
       formData.append('tool', selectedTool);
 
       // Send request to backend for PDF generation
-      const response = await axios.post('http://localhost:5000/generate_pdf', formData, {
+      const response = await axios.post(`${backendUrl}/generate_pdf`, formData, {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' },
       });

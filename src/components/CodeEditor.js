@@ -2,7 +2,23 @@ import React, { useState, useEffect, useRef } from 'react';
 import Editor from '@monaco-editor/react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from 'axios';
-import { Document, Page } from 'react-pdf';
+
+const ErrorModal = ({ show, handleClose, error }) => {
+    if (!show) return null;
+  
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+        <div className="bg-white p-4 rounded shadow-md w-1/3">
+          <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
+          <p>{error.message}</p>
+          {error.data && <p className="text-sm text-gray-600">Response: {error.data}</p>}
+          <div className="mt-4 flex justify-end">
+            <button onClick={handleClose} className="px-4 py-2 bg-red-500 text-white rounded">Close</button>
+          </div>
+        </div>
+      </div>
+    );
+  };
 
 const CodeEditor = () => {
   const [html, setHtml] = useState('<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>');
@@ -15,6 +31,9 @@ const CodeEditor = () => {
   const [tools, setTools] = useState([]);
   const [selectedTool, setSelectedTool] = useState('weasyprint');
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorDetails, setErrorDetails] = useState({ status: '', message: '', data: '' });
+  
 
   useEffect(() => {
     updatePreview();
@@ -118,18 +137,33 @@ const CodeEditor = () => {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' },
       });
+console.log(response);
+      // If the response is not 200, handle the error
+      if (response.status !== 200) {
+        throw new Error(`Error: ${response.status} - ${response.statusText}`);
+      }
 
       // Create a URL for the generated PDF
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
       const pdfUrl = URL.createObjectURL(pdfBlob);
       setPdfUrl(pdfUrl);  // Set the PDF URL to the state
     } catch (error) {
+      setShowErrorModal(true);  // Show the modal
+      setErrorDetails({
+        status: error.response?.status || 'Unknown',
+        message: error.message,
+        data: error.response?.data ? await error.response.data.text() : '',
+      });
       console.error('Error generating PDF:', error);
     }
   };
 
   const toggleFullscreen = () => {
     setIsFullscreen(!isFullscreen);
+  };
+
+  const handleErrorModalClose = () => {
+    setShowErrorModal(false);
   };
 
   const renderEditor = (type, value, setValue) => (
@@ -233,6 +267,8 @@ const CodeEditor = () => {
           </div>
         )}
       </div>
+      {/* Error Modal */}
+      <ErrorModal show={showErrorModal} handleClose={handleErrorModalClose} error={errorDetails} />
     </div>
   );
 };

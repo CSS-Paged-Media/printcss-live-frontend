@@ -43,50 +43,58 @@ const CodeEditor = () => {
     <div className="flex flex-col h-screen bg-gray-800 text-white">
       <div className="flex-1 flex">
         <div className="w-1/2 flex flex-col">
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col">
             <div className="box-heading">HTML</div>
-            <Editor
-              height="33%"
-              defaultLanguage="html"
-              value={html}
-              onChange={setHtml}
-              theme="vs-dark"
-              options={{ minimap: { enabled: false } }}
-            />
+            <div className="flex-1">
+              <Editor
+                height="100%"
+                defaultLanguage="html"
+                value={html}
+                onChange={setHtml}
+                theme="vs-dark"
+                options={{ minimap: { enabled: false } }}
+              />
+            </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col">
             <div className="box-heading">CSS</div>
-            <Editor
-              height="33%"
-              defaultLanguage="css"
-              value={css}
-              onChange={setCss}
-              theme="vs-dark"
-              options={{ minimap: { enabled: false } }}
-            />
+            <div className="flex-1">
+              <Editor
+                height="100%"
+                defaultLanguage="css"
+                value={css}
+                onChange={setCss}
+                theme="vs-dark"
+                options={{ minimap: { enabled: false } }}
+              />
+            </div>
           </div>
-          <div className="flex-1">
+          <div className="flex-1 flex flex-col">
             <div className="box-heading">JavaScript</div>
-            <Editor
-              height="33%"
-              defaultLanguage="javascript"
-              value={js}
-              onChange={setJs}
-              theme="vs-dark"
-              options={{ minimap: { enabled: false } }}
-            />
+            <div className="flex-1">
+              <Editor
+                height="100%"
+                defaultLanguage="javascript"
+                value={js}
+                onChange={setJs}
+                theme="vs-dark"
+                options={{ minimap: { enabled: false } }}
+              />
+            </div>
           </div>
         </div>
-        <div className="w-1/2 p-4">
+        <div className="w-1/2 p-4 flex flex-col">
           <div className="box-heading">
             Preview <i>powered by paged.js</i>
             <button className="reload" onClick={updatePreview}>Reload</button>
           </div>
-          <iframe
-            ref={previewRef}
-            title="preview"
-            className="w-full h-full bg-white border-none"
-          />
+          <div className="flex-1">
+            <iframe
+              ref={previewRef}
+              title="preview"
+              className="w-full h-full bg-white border-none"
+            />
+          </div>
         </div>
       </div>
     </div>

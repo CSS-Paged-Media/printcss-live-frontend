@@ -80,73 +80,75 @@ const Samples = () => {
   }, [searchTerm, selectedCategory, samples]);
 
   return (
-    <>
-      <h2 className="text-2xl font-bold mt-8 mb-4">Templates</h2>
+    <div className="p-16">
+        <h2 className="text-2xl font-bold mt-8 mb-4">Templates</h2>
+        <div className="mb-4 flex items-center w-full">
+            {/* Search Bar */}
+            <input
+                type="text"
+                placeholder="Search by title, category, works best with..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="max-w-64 p-2 w-3/4 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2"
+            />
 
-      {/* Search Bar */}
-      <input
-        type="text"
-        placeholder="Search by title, category, works best with..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="p-2 mb-4 w-full rounded border border-gray-300"
-      />
-
-      {/* Category Filter */}
-      <div className="mb-4">
-        <label className="mr-2">Filter by category:</label>
-        <select
-          value={selectedCategory}
-          onChange={(e) => setSelectedCategory(e.target.value)}
-          className="p-2 rounded border border-gray-300"
-        >
-          {categories.map((category, index) => (
-            <option key={index} value={category}>
-              {category}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      {error && (
-        <div className="text-red-500">Error loading samples: {error.message}</div>
-      )}
-
-      {loading ? (
-        <p>Loading samples...</p>
-      ) : (
-        <div className="samples-list grid grid-cols-6 gap-8 mb-8">
-          {filteredSamples.length > 0 ? filteredSamples.map((sample, index) => (
-            <div key={index} className="sample-card bg-gray-700 p-4 rounded">
-              {/* Display the preview image */}
-              <div className="preview mb-4">
-                <img src={sample.previewImage} alt={sample.title} className="max-h-32 max-w-32 rounded mx-auto" />
-              </div>
-              
-              {/* Button to open the editor */}
-              <button
-                onClick={() => openEditor(sample)}  // Open editor with state
-                className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2"
-              >
-                {sample.title}
-              </button>
-
-              {/* Category and Works Best With Labels */}
-              {sample.category && (
-                <p className="text-sm text-gray-300 mb-1">Category: <span className="text-white">{sample.category}</span></p>
-              )}
-              {sample.works_best_with && sample.works_best_with.length > 0 && (
-                <p className="text-sm text-gray-300">Works Best With: 
-                  <span className="text-white"> {sample.works_best_with.join(', ')}</span> {/* Join array elements */}
-                </p>
-              )}
+            {/* Category Filter */}
+            <div className="flex items-center w-1/4 ml-4">
+                <label className="mr-2 text-white font-bold">Category:</label>
+                <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="p-2 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                {categories.map((category, index) => (
+                    <option key={index} value={category}>
+                    {category}
+                    </option>
+                ))}
+                </select>
             </div>
-          )) : (
-            <p>No samples found.</p>
-          )}
         </div>
-      )}
-    </>
+
+
+        {error && (
+            <div className="text-red-500">Error loading samples: {error.message}</div>
+        )}
+
+        {loading ? (
+            <p>Loading samples...</p>
+        ) : (
+            <div className="samples-list grid grid-cols-6 gap-8 mb-8">
+            {filteredSamples.length > 0 ? filteredSamples.map((sample, index) => (
+                <div key={index} className="sample-card bg-gray-700 p-4 rounded">
+                {/* Display the preview image */}
+                <div className="preview mb-4">
+                    <img src={sample.previewImage} alt={sample.title} className="max-h-32 max-w-32 rounded mx-auto" />
+                </div>
+                
+                {/* Button to open the editor */}
+                <button
+                    onClick={() => openEditor(sample)}  // Open editor with state
+                    className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2"
+                >
+                    {sample.title}
+                </button>
+
+                {/* Category and Works Best With Labels */}
+                {sample.category && (
+                    <p className="text-sm text-gray-300 mb-1">Category: <span className="text-white">{sample.category}</span></p>
+                )}
+                {sample.works_best_with && sample.works_best_with.length > 0 && (
+                    <p className="text-sm text-gray-300">Works Best With: 
+                    <span className="text-white"> {sample.works_best_with.join(', ')}</span> {/* Join array elements */}
+                    </p>
+                )}
+                </div>
+            )) : (
+                <p>No samples found.</p>
+            )}
+            </div>
+        )}
+    </div>
   );
 };
 

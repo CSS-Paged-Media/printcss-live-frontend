@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import 'bootstrap-icons/font/bootstrap-icons.css'; // Ensure bootstrap icons are imported
+import Samples from './Samples';
 
 const Home = () => {
   return (
@@ -36,6 +37,7 @@ const Home = () => {
           Discord
         </a>
       </div>
+      <Samples />
     </div>
   );
 };

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Editor from '@monaco-editor/react';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from 'axios';
@@ -21,9 +22,19 @@ const ErrorModal = ({ show, handleClose, error }) => {
 };
 
 const CodeEditor = () => {
-  const [html, setHtml] = useState('<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>');
-  const [css, setCss] = useState('@page{\n\tsize:3.5in 2in;\n\tmarks:crop;\n\tbleed:0.125in;\n\tmargin:0.25in;\n} \n\n@page:first{\n\tbackground:rgb(188, 11, 6);\n\tbackground-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n\tmargin:0;\n}\n\nbody{\n\tfont-size:10pt;\n}\n\nb{\n\tcolor:rgb(188, 11, 6);\n\tfont-size:1.5rem;\n}\n\n.head{\n\tdisplay:inline-block;\n\tmargin-bottom: .5rem;\n}\n\n.foot{\n\tdisplay:inline-block;\n\tmargin-top: .75rem;\n\tborder-left:.25rem solid rgb(188, 11, 6);\n\tpadding-left:.5rem;\n}\n\n.break{\n\tpage-break-after: always;\n\tbreak-after: always;\n}');
-  const [js, setJs] = useState('/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/');
+  const location = useLocation();
+  const { 
+    htmlFromTemplate = '', 
+    cssFromTemplate = '', 
+    javascriptFromTemplate = '' } = location.state || {
+      htmlFromTemplate: '<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>',
+      cssFromTemplate: '@page{\n\tsize:3.5in 2in;\n\tmarks:crop;\n\tbleed:0.125in;\n\tmargin:0.25in;\n} \n\n@page:first{\n\tbackground:rgb(188, 11, 6);\n\tbackground-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n\tmargin:0;\n}\n\nbody{\n\tfont-size:10pt;\n}\n\nb{\n\tcolor:rgb(188, 11, 6);\n\tfont-size:1.5rem;\n}\n\n.head{\n\tdisplay:inline-block;\n\tmargin-bottom: .5rem;\n}\n\n.foot{\n\tdisplay:inline-block;\n\tmargin-top: .75rem;\n\tborder-left:.25rem solid rgb(188, 11, 6);\n\tpadding-left:.5rem;\n}\n\n.break{\n\tpage-break-after: always;\n\tbreak-after: always;\n}',
+      javascriptFromTemplate: '/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/'
+    }; 
+
+  const [html, setHtml] = useState(htmlFromTemplate);
+  const [css, setCss] = useState(cssFromTemplate);
+  const [js, setJs] = useState(javascriptFromTemplate);
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
   const [activeRenderingTab, setActiveRenderingTab] = useState('preview');
@@ -130,7 +141,9 @@ const CodeEditor = () => {
     try {
       const formData = new FormData();
       const blob = new Blob([inputHtml], { type: 'text/html' });
-      formData.append('input_file', blob);
+      const file = new File([blob], 'index.html', { type: 'text/html' });
+
+      formData.append('input_file', file);
       formData.append('tool', selectedTool);
 
       // Send request to backend for PDF generation
@@ -167,6 +180,37 @@ const CodeEditor = () => {
     setShowErrorModal(false);
   };
 
+  const downloadJson = () => {
+    const data = { html, css, js };
+    const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'printcss_saved_code.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const importJson = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          setHtml(data.html || '');
+          setCss(data.css || '');
+          setJs(data.js || '');
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
   const renderEditor = (type, value, setValue) => (
     <div className={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
       <Editor
@@ -192,12 +236,31 @@ const CodeEditor = () => {
             {tab.toUpperCase()}
           </button>
         ))}
-        <button 
-          onClick={toggleFullscreen} 
-          className="ml-auto p-2"
-        >
-          <i className={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
-        </button>
+        <div className="ml-auto flex items-center">
+          <button 
+            onClick={downloadJson} 
+            className="p-2"
+            title="Download JSON"
+          >
+            <i className="bi bi-download"></i>
+          </button>
+          <label className="p-2 cursor-pointer" title="Import JSON">
+            <input
+              type="file"
+              accept=".json"
+              onChange={importJson}
+              style={{ display: 'none' }}
+            />
+            <i className="bi bi-upload"></i>
+          </label>
+          <button 
+            onClick={toggleFullscreen} 
+            className="p-2"
+            title="Toggle Fullscreen"
+          >
+            <i className={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
+          </button>
+        </div>
       </div>
       {renderEditor('html', html, setHtml)}
       {renderEditor('css', css, setCss)}

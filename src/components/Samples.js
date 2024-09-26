@@ -120,28 +120,41 @@ const Samples = () => {
             <div className="samples-list grid grid-cols-6 gap-8 mb-8">
             {filteredSamples.length > 0 ? filteredSamples.map((sample, index) => (
                 <div key={index} className="sample-card bg-gray-700 p-4 rounded">
-                {/* Display the preview image */}
-                <div className="preview mb-4">
-                    <img src={sample.previewImage} alt={sample.title} className="max-h-32 max-w-32 rounded mx-auto" />
-                </div>
-                
-                {/* Button to open the editor */}
-                <button
-                    onClick={() => openEditor(sample)}  // Open editor with state
-                    className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2"
-                >
-                    {sample.title}
-                </button>
+                    {/* Display the preview image */}
+                    <div className="preview mb-4">
+                        <img src={sample.previewImage} alt={sample.title} className="max-h-32 max-w-32 rounded mx-auto" />
+                    </div>
+                    
+                    {/* Button to open the editor */}
+                    <button
+                        onClick={() => openEditor(sample)}  // Open editor with state
+                        className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2"
+                    >
+                        {sample.title}
+                    </button>
 
-                {/* Category and Works Best With Labels */}
-                {sample.category && (
-                    <p className="text-sm text-gray-300 mb-1">Category: <span className="text-white">{sample.category}</span></p>
-                )}
-                {sample.works_best_with && sample.works_best_with.length > 0 && (
-                    <p className="text-sm text-gray-300">Works Best With: 
-                    <span className="text-white"> {sample.works_best_with.join(', ')}</span> {/* Join array elements */}
-                    </p>
-                )}
+                    <div className="flex flex-wrap gap-1 mb-2">
+                        {/* Category Label */}
+                        {sample.category && (
+                            <span className="bg-gray-500 text-gray-100 text-[10px] font-medium px-1.5 py-0.5 rounded">
+                                {sample.category}
+                            </span>
+                        )}
+
+                        {/* Works Best With Labels */}
+                        {sample.works_best_with && sample.works_best_with.length > 0 && (
+                            <>
+                                {sample.works_best_with.map((item, index) => (
+                                    <span
+                                        key={index}
+                                        className="bg-gray-400 text-gray-900 text-[10px] font-medium px-1.5 py-0.5 rounded"
+                                    >
+                                        {item}
+                                    </span>
+                                ))}
+                            </>
+                        )}
+                    </div>
                 </div>
             )) : (
                 <p>No samples found.</p>

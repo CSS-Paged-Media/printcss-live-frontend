@@ -38,6 +38,7 @@ const CodeEditor = () => {
   const previewRef = useRef(null);
   const [activeTab, setActiveTab] = useState('html');
   const [activeRenderingTab, setActiveRenderingTab] = useState('preview');
+  const [isLoading, setIsLoading] = useState(false);
   const [pdfUrl, setPdfUrl] = useState(null);
   const [tools, setTools] = useState([]);
   const [selectedTool, setSelectedTool] = useState('weasyprint');
@@ -139,6 +140,8 @@ const CodeEditor = () => {
     `;
     
     try {
+      setIsLoading(true);
+    
       const formData = new FormData();
       const blob = new Blob([inputHtml], { type: 'text/html' });
       const file = new File([blob], 'index.html', { type: 'text/html' });
@@ -169,6 +172,8 @@ const CodeEditor = () => {
         data: error.response?.data ? await error.response.data.text() : '',
       });
       console.error('Error generating PDF:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -320,12 +325,21 @@ const CodeEditor = () => {
                   className="w-full h-full bg-white border-none"
                 />
               )}
-              {activeRenderingTab === 'pdf' && pdfUrl && (
-                <iframe
-                  src={pdfUrl}
-                  title="pdf-viewer"
-                  className="w-full h-full bg-white border-none"
-                />
+              {activeRenderingTab === 'pdf' && (
+                <>
+                    {isLoading ? (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
+                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
+                            <p className="text-white text-xl font-semibold">Rendering PDF...</p>
+                        </div>
+                    ) : pdfUrl ? (
+                        <iframe
+                            src={pdfUrl}
+                            title="pdf-viewer"
+                            className="w-full h-full bg-white border-none"
+                        />
+                    ) : null}
+                </>
               )}
             </div>
           </div>

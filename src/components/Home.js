@@ -5,7 +5,7 @@ import Samples from './Samples';
 
 const Home = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-800 text-white">
+    <div className="flex flex-col items-center justify-center bg-gray-800 text-white">
       <h1 className="text-4xl font-bold mb-4">Welcome to the PrintCSS Playground</h1>
       <p className="text-xl mb-8">A simple, yet powerful editor for designing and previewing print-ready web layouts with live rendering.</p>
       

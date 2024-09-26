@@ -29,6 +29,10 @@ const loadTemplateFiles = async () => {
 
 const Samples = () => {
   const [samples, setSamples] = useState([]);
+  const [filteredSamples, setFilteredSamples] = useState([]); // For filtered samples
+  const [categories, setCategories] = useState([]); // To store all categories
+  const [searchTerm, setSearchTerm] = useState(''); // Search term
+  const [selectedCategory, setSelectedCategory] = useState('All'); // For category filter
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -43,6 +47,12 @@ const Samples = () => {
         setLoading(true);
         const templates = await loadTemplateFiles();
         setSamples(templates);
+
+        // Extract unique categories for filtering
+        const uniqueCategories = ['All', ...new Set(templates.map(sample => sample.category || 'Uncategorized'))];
+        setCategories(uniqueCategories);
+
+        setFilteredSamples(templates); // Initially, show all templates
         setLoading(false);
       } catch (err) {
         console.error('Error loading templates:', err);
@@ -54,10 +64,49 @@ const Samples = () => {
     fetchTemplates();
   }, []);
 
+  // Handle Search
+  useEffect(() => {
+    const lowercasedSearchTerm = searchTerm.toLowerCase();
+    const filtered = samples.filter(sample => {
+      const matchesTitle = sample.title.toLowerCase().includes(lowercasedSearchTerm);
+      const matchesCategory = sample.category?.toLowerCase().includes(lowercasedSearchTerm);
+      const matchesWorksBestWith = sample.works_best_with?.some(wbw => wbw.toLowerCase().includes(lowercasedSearchTerm)); // Updated for array search
+      const matchesSelectedCategory = selectedCategory === 'All' || sample.category === selectedCategory;
+
+      return (matchesTitle || matchesCategory || matchesWorksBestWith) && matchesSelectedCategory;
+    });
+
+    setFilteredSamples(filtered);
+  }, [searchTerm, selectedCategory, samples]);
+
   return (
     <>
       <h2 className="text-2xl font-bold mt-8 mb-4">Templates</h2>
-      <p className="text-xl mb-8">Click on a template to open it in the editor.</p>
+
+      {/* Search Bar */}
+      <input
+        type="text"
+        placeholder="Search by title, category, works best with..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="p-2 mb-4 w-full rounded border border-gray-300"
+      />
+
+      {/* Category Filter */}
+      <div className="mb-4">
+        <label className="mr-2">Filter by category:</label>
+        <select
+          value={selectedCategory}
+          onChange={(e) => setSelectedCategory(e.target.value)}
+          className="p-2 rounded border border-gray-300"
+        >
+          {categories.map((category, index) => (
+            <option key={index} value={category}>
+              {category}
+            </option>
+          ))}
+        </select>
+      </div>
 
       {error && (
         <div className="text-red-500">Error loading samples: {error.message}</div>
@@ -66,8 +115,8 @@ const Samples = () => {
       {loading ? (
         <p>Loading samples...</p>
       ) : (
-        <div className="samples-list grid grid-cols-6 gap-8">
-          {samples.length > 0 ? samples.map((sample, index) => (
+        <div className="samples-list grid grid-cols-6 gap-8 mb-8">
+          {filteredSamples.length > 0 ? filteredSamples.map((sample, index) => (
             <div key={index} className="sample-card bg-gray-700 p-4 rounded">
               {/* Display the preview image */}
               <div className="preview mb-4">
@@ -77,10 +126,20 @@ const Samples = () => {
               {/* Button to open the editor */}
               <button
                 onClick={() => openEditor(sample)}  // Open editor with state
-                className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center"
+                className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2"
               >
                 {sample.title}
               </button>
+
+              {/* Category and Works Best With Labels */}
+              {sample.category && (
+                <p className="text-sm text-gray-300 mb-1">Category: <span className="text-white">{sample.category}</span></p>
+              )}
+              {sample.works_best_with && sample.works_best_with.length > 0 && (
+                <p className="text-sm text-gray-300">Works Best With: 
+                  <span className="text-white"> {sample.works_best_with.join(', ')}</span> {/* Join array elements */}
+                </p>
+              )}
             </div>
           )) : (
             <p>No samples found.</p>

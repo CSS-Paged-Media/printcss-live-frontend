@@ -49,8 +49,13 @@ const CodeEditor = () => {
   }, [html, css, js, isFullscreen]);
 
   useEffect(() => {
-    reload();
-  }, [selectedTool, activeRenderingTab]);
+    // Only reload when tool changes, not when switching tabs
+    if (activeRenderingTab === 'pdf' && pdfUrl) {
+      generatePdf();
+    } else if (activeRenderingTab === 'preview') {
+      updatePreview();
+    }
+  }, [selectedTool]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -312,10 +317,7 @@ const CodeEditor = () => {
                 <button
                     key="pdf"
                     className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
-                    onClick={() => {
-                        setActiveRenderingTab('pdf');
-                        generatePdf();
-                    }}
+                    onClick={() => setActiveRenderingTab('pdf')}
                 >
                     PDF
                 </button>
@@ -358,7 +360,16 @@ const CodeEditor = () => {
                             title="pdf-viewer"
                             className="w-full h-full bg-white border-none"
                         />
-                    ) : null}
+                    ) : (
+                        <div className="flex items-center justify-center h-full">
+                            <button 
+                                onClick={generatePdf}
+                                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-lg"
+                            >
+                                Generate PDF
+                            </button>
+                        </div>
+                    )}
                 </>
               )}
             </div>

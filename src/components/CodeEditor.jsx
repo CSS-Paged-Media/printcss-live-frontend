@@ -319,7 +319,7 @@ const CodeEditor = () => {
                 >
                     PDF
                 </button>
-                {activeRenderingTab === 'pdf' && pdfUrl && (
+                {activeRenderingTab === 'pdf' && tools.length > 0 && (
                     <select
                     value={selectedTool}
                     onChange={(e) => setSelectedTool(e.target.value)}

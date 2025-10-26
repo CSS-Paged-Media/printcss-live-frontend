@@ -26,7 +26,11 @@ const CodeEditor = () => {
   const { 
     htmlFromTemplate = '', 
     cssFromTemplate = '', 
-    javascriptFromTemplate = '' } = location.state || {};
+    javascriptFromTemplate = '' } = location.state || {
+      htmlFromTemplate: '<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>',
+      cssFromTemplate: '@page{\n\tsize:3.5in 2in;\n\tmarks:crop;\n\tbleed:0.125in;\n\tmargin:0.25in;\n} \n\n@page:first{\n\tbackground:rgb(188, 11, 6);\n\tbackground-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n\tmargin:0;\n}\n\nbody{\n\tfont-size:10pt;\n}\n\nb{\n\tcolor:rgb(188, 11, 6);\n\tfont-size:1.5rem;\n}\n\n.head{\n\tdisplay:inline-block;\n\tmargin-bottom: .5rem;\n}\n\n.foot{\n\tdisplay:inline-block;\n\tmargin-top: .75rem;\n\tborder-left:.25rem solid rgb(188, 11, 6);\n\tpadding-left:.5rem;\n}\n\n.break{\n\tpage-break-after: always;\n\tbreak-after: always;\n}',
+      javascriptFromTemplate: '/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/'
+    };
 
   const [html, setHtml] = useState(htmlFromTemplate);
   const [css, setCss] = useState(cssFromTemplate);
@@ -83,9 +87,6 @@ const CodeEditor = () => {
       previewDocument.close();
   
       setTimeout(() => {
-        // Try to include the app's compiled CSS inside the iframe so Tailwind utilities work
-        // Strategy: if the main document has a compiled CSS <link> (build mode), reuse that href
-        // otherwise fall back to gathering inline <style> tags (dev mode) and inject them.
         let appCssHref = null;
         let appCssText = '';
 

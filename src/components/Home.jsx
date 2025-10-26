@@ -1,7 +1,6 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import 'bootstrap-icons/font/bootstrap-icons.css'; // Ensure bootstrap icons are imported
-import Samples from './Samples';
+import { Link } from 'react-router-dom'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import Samples from './Samples'
 
 const Home = () => {
   return (
@@ -15,7 +14,6 @@ const Home = () => {
       </Link>
 
       <div className="flex mt-8 space-x-4">
-        {/* Link to GitHub repo with GitHub icon */}
         <a
           href="https://github.com/CSS-Paged-Media"
           className="flex items-center bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
@@ -26,7 +24,6 @@ const Home = () => {
           GitHub
         </a>
 
-        {/* Link to Discord with Discord icon */}
         <a
           href="https://discord.gg/sAHAQdh"
           className="flex items-center bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
@@ -39,7 +36,7 @@ const Home = () => {
       </div>
       <Samples />
     </div>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

@@ -1,8 +1,7 @@
-import React from 'react';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import Home from './components/Home';
-import CodeEditor from './components/CodeEditor';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Home from './components/Home'
+import CodeEditor from './components/CodeEditor'
 
 function App() {
   return (
@@ -15,7 +14,7 @@ function App() {
         </Routes>
       </div>
     </Router>
-  );
+  )
 }
 
-export default App;
+export default App

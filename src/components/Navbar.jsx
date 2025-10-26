@@ -1,8 +1,8 @@
-import React, {useState} from 'react';
-import { Link } from 'react-router-dom';
+import {useState} from 'react'
+import { Link } from 'react-router-dom'
 
-const imprintHtml = process.env.REACT_APP_IMPRINT_HTML;
-const privacyHtml = process.env.REACT_APP_PRIVACY_HTML;
+const imprintHtml = process.env.REACT_APP_IMPRINT_HTML
+const privacyHtml = process.env.REACT_APP_PRIVACY_HTML
 
 const HtmlModal = ({ show, handleClose, htmlText }) => {
     if (!show) return null;
@@ -10,7 +10,7 @@ const HtmlModal = ({ show, handleClose, htmlText }) => {
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center">
             <div className="bg-white p-4 rounded shadow-md w-1/3">
-                <div dangerouslySetInnerHTML={{ __html: htmlText.replace(/\r/g, '') }} class="max-h-80 overflow-auto" />
+                <div dangerouslySetInnerHTML={{ __html: htmlText.replace(/\r/g, '') }} className="max-h-80 overflow-auto" />
                 <div className="mt-4 flex justify-end">
                     <button onClick={handleClose} className="px-4 py-2 bg-blue-500 hover:bg-blue-700 text-white font-bold rounded">Close</button>
                 </div>
@@ -53,4 +53,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar

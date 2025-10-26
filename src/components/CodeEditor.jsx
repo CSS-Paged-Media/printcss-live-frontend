@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
-import Editor from '@monaco-editor/react';
-import 'bootstrap-icons/font/bootstrap-icons.css';
-import axios from 'axios';
+import { useState, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+import Editor from '@monaco-editor/react'
+import 'bootstrap-icons/font/bootstrap-icons.css'
+import axios from 'axios'
 
 const ErrorModal = ({ show, handleClose, error }) => {
     if (!show) return null;
@@ -26,11 +26,7 @@ const CodeEditor = () => {
   const { 
     htmlFromTemplate = '', 
     cssFromTemplate = '', 
-    javascriptFromTemplate = '' } = location.state || {
-      htmlFromTemplate: '<div class="break"></div>\n<span class="head">\n\t<b>Max Mustermann</b>\n\t<br />\n\ta fancy and long title\n</span>\n<br />\nmax.mustermann@example.com\n<br />\nMobile +49 123 4567 8901\n<br />\nwww.example.com\n<br />\n<span class="foot">\n\tExample Company\n\t<br />\n\tBusystreet 5 &middot; 00001 Gotham\n</span>',
-      cssFromTemplate: '@page{\n\tsize:3.5in 2in;\n\tmarks:crop;\n\tbleed:0.125in;\n\tmargin:0.25in;\n} \n\n@page:first{\n\tbackground:rgb(188, 11, 6);\n\tbackground-image:url(https://azettl.github.io/html2pdf/assets/img/html2pdf.guru.png);\n\tbackground-position: center;\n\tbackground-repeat: no-repeat;\n\tmargin:0;\n}\n\nbody{\n\tfont-size:10pt;\n}\n\nb{\n\tcolor:rgb(188, 11, 6);\n\tfont-size:1.5rem;\n}\n\n.head{\n\tdisplay:inline-block;\n\tmargin-bottom: .5rem;\n}\n\n.foot{\n\tdisplay:inline-block;\n\tmargin-top: .75rem;\n\tborder-left:.25rem solid rgb(188, 11, 6);\n\tpadding-left:.5rem;\n}\n\n.break{\n\tpage-break-after: always;\n\tbreak-after: always;\n}',
-      javascriptFromTemplate: '/* \n\tPut your JavaScript here!\n\n\tBut be aware that not all rendering tools \n\tare supporting JavaScript. \n*/'
-    }; 
+    javascriptFromTemplate = '' } = location.state || {};
 
   const [html, setHtml] = useState(htmlFromTemplate);
   const [css, setCss] = useState(cssFromTemplate);
@@ -54,11 +50,9 @@ const CodeEditor = () => {
 
   useEffect(() => {
     reload();
-  }, [selectedTool, activeRenderingTab]);  // Trigger whenever tool or PDF tab changes
+  }, [selectedTool, activeRenderingTab]);
 
-  // New effect to reload preview on app load
   useEffect(() => {
-    // Short timeout to ensure the app is fully rendered
     const timer = setTimeout(() => {
       updatePreview();
     }, 100);
@@ -71,7 +65,7 @@ const CodeEditor = () => {
   const reload = () => {
     if (activeRenderingTab === 'pdf') {
         generatePdf();
-    }else{
+    } else {
         updatePreview();
     }
   };
@@ -79,15 +73,11 @@ const CodeEditor = () => {
   const updatePreview = () => {
     if (previewRef.current) {
       const previewDocument = previewRef.current.contentDocument;
-      
-      // Clear the existing content
       previewDocument.open();
       previewDocument.write('');
       previewDocument.close();
   
-      // Small delay to ensure clearing is complete
       setTimeout(() => {
-        // Write new content
         previewDocument.open();
         previewDocument.write(`
           <!DOCTYPE html>
@@ -141,7 +131,6 @@ const CodeEditor = () => {
     
     try {
       setIsLoading(true);
-    
       const formData = new FormData();
       const blob = new Blob([inputHtml], { type: 'text/html' });
       const file = new File([blob], 'index.html', { type: 'text/html' });
@@ -149,23 +138,20 @@ const CodeEditor = () => {
       formData.append('input_file', file);
       formData.append('tool', selectedTool);
 
-      // Send request to backend for PDF generation
       const response = await axios.post(`${backendUrl}/generate_pdf`, formData, {
         responseType: 'blob',
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      // If the response is not 200, handle the error
       if (response.status !== 200) {
         throw new Error(`Error: ${response.status} - ${response.statusText}`);
       }
 
-      // Create a URL for the generated PDF
       const pdfBlob = new Blob([response.data], { type: 'application/pdf' });
       const pdfUrl = URL.createObjectURL(pdfBlob);
-      setPdfUrl(pdfUrl);  // Set the PDF URL to the state
+      setPdfUrl(pdfUrl);
     } catch (error) {
-      setShowErrorModal(true);  // Show the modal
+      setShowErrorModal(true);
       setErrorDetails({
         status: error.response?.status || 'Unknown',
         message: error.message,
@@ -293,12 +279,11 @@ const CodeEditor = () => {
                     className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
                     onClick={() => {
                         setActiveRenderingTab('pdf');
-                        generatePdf();  // Generate PDF on clicking the PDF tab
+                        generatePdf();
                     }}
                 >
                     PDF
                 </button>
-                {/* Dropdown for tool selection */}
                 {activeRenderingTab === 'pdf' && pdfUrl && (
                     <select
                     value={selectedTool}
@@ -345,10 +330,9 @@ const CodeEditor = () => {
           </div>
         )}
       </div>
-      {/* Error Modal */}
       <ErrorModal show={showErrorModal} handleClose={handleErrorModalClose} error={errorDetails} />
     </div>
-  );
-};
+  )
+}
 
-export default CodeEditor;
+export default CodeEditor

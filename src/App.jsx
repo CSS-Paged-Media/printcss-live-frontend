@@ -6,7 +6,7 @@ import CodeEditor from './components/CodeEditor'
 function App() {
   return (
     <Router>
-      <div className="flex flex-col">
+      <div class="flex flex-col">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />

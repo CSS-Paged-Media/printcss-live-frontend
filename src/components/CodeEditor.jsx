@@ -8,13 +8,13 @@ const ErrorModal = ({ show, handleClose, error }) => {
     if (!show) return null;
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div className="bg-white p-4 rounded shadow-md w-1/3">
-                <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+            <div class="bg-white p-4 rounded shadow-md w-1/3">
+                <h2 class="text-lg font-bold text-red-600">Error {error.status}</h2>
                 <p>{error.message}</p>
-                {error.data && <p className="text-sm text-gray-600 max-h-80 overflow-auto">Response: {error.data}</p>}
-                <div className="mt-4 flex justify-end">
-                    <button onClick={handleClose} className="px-4 py-2 bg-red-500 text-white rounded">Close</button>
+                {error.data && <p class="text-sm text-gray-600 max-h-80 overflow-auto">Response: {error.data}</p>}
+                <div class="mt-4 flex justify-end">
+                    <button onClick={handleClose} class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
                 </div>
             </div>
         </div>
@@ -203,7 +203,7 @@ const CodeEditor = () => {
   };
 
   const renderEditor = (type, value, setValue) => (
-    <div className={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
+    <div class={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
       <Editor
         height="100%"
         defaultLanguage={type}
@@ -216,40 +216,40 @@ const CodeEditor = () => {
   );
 
   const editorSection = (
-    <div className={`flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-800' : 'w-1/2'}`}>
-      <div className="flex bg-gray-700 items-center">
+    <div class={`flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-800' : 'w-1/2'}`}>
+      <div class="flex bg-gray-700 items-center">
         {['html', 'css', 'javascript'].map(tab => (
           <button
             key={tab}
-            className={`px-4 py-2 ${activeTab === tab ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+            class={`px-4 py-2 ${activeTab === tab ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
             onClick={() => setActiveTab(tab)}
           >
             {tab.toUpperCase()}
           </button>
         ))}
-        <div className="ml-auto flex items-center">
+        <div class="ml-auto flex items-center">
           <button 
             onClick={downloadJson} 
-            className="p-2"
+            class="p-2"
             title="Download JSON"
           >
-            <i className="bi bi-download"></i>
+            <i class="bi bi-download"></i>
           </button>
-          <label className="p-2 cursor-pointer" title="Import JSON">
+          <label class="p-2 cursor-pointer" title="Import JSON">
             <input
               type="file"
               accept=".json"
               onChange={importJson}
               style={{ display: 'none' }}
             />
-            <i className="bi bi-upload"></i>
+            <i class="bi bi-upload"></i>
           </label>
           <button 
             onClick={toggleFullscreen} 
-            className="p-2"
+            class="p-2"
             title="Toggle Fullscreen"
           >
-            <i className={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
+            <i class={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
           </button>
         </div>
       </div>
@@ -260,23 +260,23 @@ const CodeEditor = () => {
   );
 
   return (
-    <div className="flex flex-col h-screen bg-gray-800 text-white">
-      <div className="flex-1 flex">
+    <div class="flex flex-col h-screen bg-gray-800 text-white">
+      <div class="flex-1 flex">
         {editorSection}
         {!isFullscreen && (
-          <div className="w-1/2 flex flex-col">
-            <div className="flex bg-gray-700 items-center justify-between px-4">
+          <div class="w-1/2 flex flex-col">
+            <div class="flex bg-gray-700 items-center justify-between px-4">
               <div>          
                 <button
                     key="preview"
-                    className={`px-4 py-2 ${activeRenderingTab === 'preview' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    class={`px-4 py-2 ${activeRenderingTab === 'preview' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
                     onClick={() => setActiveRenderingTab('preview')}
                 >
                     Preview
                 </button>
                 <button
                     key="pdf"
-                    className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    class={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
                     onClick={() => {
                         setActiveRenderingTab('pdf');
                         generatePdf();
@@ -288,7 +288,7 @@ const CodeEditor = () => {
                     <select
                     value={selectedTool}
                     onChange={(e) => setSelectedTool(e.target.value)}
-                    className="ml-2 p-1 bg-gray-600 text-white rounded"
+                    class="ml-2 p-1 bg-gray-600 text-white rounded"
                     >
                     {tools.map(tool => (
                         <option key={tool} value={tool}>
@@ -298,30 +298,30 @@ const CodeEditor = () => {
                     </select>
                 )}
               </div>
-              <button className="reload p-1" onClick={reload}>
-                <i className="bi bi-arrow-clockwise"></i> Reload
+              <button class="reload p-1" onClick={reload}>
+                <i class="bi bi-arrow-clockwise"></i> Reload
               </button>
             </div>
-            <div className="flex-1 p-4">
+            <div class="flex-1 p-4">
               {activeRenderingTab === 'preview' && (
                 <iframe
                   ref={previewRef}
                   title="preview"
-                  className="w-full h-full bg-white border-none"
+                  class="w-full h-full bg-white border-none"
                 />
               )}
               {activeRenderingTab === 'pdf' && (
                 <>
                     {isLoading ? (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
-                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
-                            <p className="text-white text-xl font-semibold">Rendering PDF...</p>
+                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
+                            <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
+                            <p class="text-white text-xl font-semibold">Rendering PDF...</p>
                         </div>
                     ) : pdfUrl ? (
                         <iframe
                             src={pdfUrl}
                             title="pdf-viewer"
-                            className="w-full h-full bg-white border-none"
+                            class="w-full h-full bg-white border-none"
                         />
                     ) : null}
                 </>

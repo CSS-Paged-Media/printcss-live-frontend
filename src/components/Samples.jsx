@@ -72,32 +72,32 @@ const Samples = () => {
   }, [searchTerm, selectedCategory, samples])
 
   return (
-    <div class="p-16">
-      <h2 class="text-2xl font-bold mt-8 mb-4">Templates</h2>
-      <div class="mb-4 flex items-center w-full">
-        <input type="text" placeholder="Search by title, category, works best with..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} class="max-w-64 p-2 w-3/4 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2" />
-        <div class="flex items-center w-1/4 ml-4">
-          <label class="mr-2 text-white font-bold">Category:</label>
-          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} class="p-2 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
+    <div className="p-16">
+      <h2 className="text-2xl font-bold mt-8 mb-4">Templates</h2>
+      <div className="mb-4 flex items-center w-full">
+        <input type="text" placeholder="Search by title, category, works best with..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="max-w-64 p-2 w-3/4 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 mr-2" />
+        <div className="flex items-center w-1/4 ml-4">
+          <label className="mr-2 text-white font-bold">Category:</label>
+          <select value={selectedCategory} onChange={(e) => setSelectedCategory(e.target.value)} className="p-2 bg-gray-700 text-white rounded border border-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500">
             {categories.map((c, i) => <option key={i} value={c}>{c}</option>)}
           </select>
         </div>
       </div>
 
-      {error && <div class="text-red-500">Error loading samples: {error.message}</div>}
+      {error && <div className="text-red-500">Error loading samples: {error.message}</div>}
 
       {loading ? <p>Loading samples...</p> : (
-        <div class="samples-list grid grid-cols-6 gap-8 mb-8">
+        <div className="samples-list grid grid-cols-6 gap-8 mb-8">
           {filteredSamples.length > 0 ? filteredSamples.map((sample, index) => (
-            <div key={index} class="sample-card bg-gray-700 p-4 rounded">
-              <div class="preview mb-4">
-                <img src={sample.previewImage} alt={sample.title} class="max-h-32 max-w-32 rounded mx-auto" />
+            <div key={index} className="sample-card bg-gray-700 p-4 rounded">
+              <div className="preview mb-4">
+                <img src={sample.previewImage} alt={sample.title} className="max-h-32 max-w-32 rounded mx-auto" />
               </div>
-              <button onClick={() => openEditor(sample)} class="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2">{sample.title}</button>
-              <div class="flex flex-wrap gap-1 mb-2">
-                {sample.category && <span class="bg-gray-500 text-gray-100 text-[10px] font-medium px-1.5 py-0.5 rounded">{sample.category}</span>}
+              <button onClick={() => openEditor(sample)} className="w-full block bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-center mb-2">{sample.title}</button>
+              <div className="flex flex-wrap gap-1 mb-2">
+                {sample.category && <span className="bg-gray-500 text-gray-100 text-[10px] font-medium px-1.5 py-0.5 rounded">{sample.category}</span>}
                 {sample.works_best_with && sample.works_best_with.length > 0 && sample.works_best_with.map((item, idx) => (
-                  <span key={idx} class="bg-gray-400 text-gray-900 text-[10px] font-medium px-1.5 py-0.5 rounded">{item}</span>
+                  <span key={idx} className="bg-gray-400 text-gray-900 text-[10px] font-medium px-1.5 py-0.5 rounded">{item}</span>
                 ))}
               </div>
             </div>

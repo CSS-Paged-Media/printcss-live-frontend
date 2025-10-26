@@ -8,15 +8,15 @@ const ErrorModal = ({ show, handleClose, error }) => {
     if (!show) return null;
 
     return (
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-            <div class="bg-white p-4 rounded shadow-md w-1/3">
-                <h2 class="text-lg font-bold text-red-600">Error {error.status}</h2>
-                <p>{error.message}</p>
-                {error.data && <p class="text-sm text-gray-600 max-h-80 overflow-auto">Response: {error.data}</p>}
-                <div class="mt-4 flex justify-end">
-                    <button onClick={handleClose} class="px-4 py-2 bg-red-500 text-white rounded">Close</button>
-                </div>
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-4 rounded shadow-md w-1/3">
+            <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
+            <p>{error.message}</p>
+            {error.data && <p className="text-sm text-gray-600 max-h-80 overflow-auto">Response: {error.data}</p>}
+            <div className="mt-4 flex justify-end">
+              <button onClick={handleClose} className="px-4 py-2 bg-red-500 text-white rounded">Close</button>
             </div>
+          </div>
         </div>
     );
 };
@@ -42,7 +42,8 @@ const CodeEditor = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorDetails, setErrorDetails] = useState({ status: '', message: '', data: '' });
   
-  const backendUrl = process.env.REACT_APP_PRINTCSS_BACKEND_URL;
+  // Vite uses import.meta.env and env vars must be prefixed with VITE_
+  const backendUrl = import.meta.env.VITE_PRINTCSS_BACKEND_URL || '';
 
   useEffect(() => {
     updatePreview();
@@ -78,21 +79,42 @@ const CodeEditor = () => {
       previewDocument.close();
   
       setTimeout(() => {
+        // Try to include the app's compiled CSS inside the iframe so Tailwind utilities work
+        // Strategy: if the main document has a compiled CSS <link> (build mode), reuse that href
+        // otherwise fall back to gathering inline <style> tags (dev mode) and inject them.
+        let appCssHref = null;
+        let appCssText = '';
+
+        try {
+          const linkEl = document.querySelector('link[rel="stylesheet"][href$=".css"]');
+          if (linkEl && linkEl.href) {
+            appCssHref = linkEl.href;
+          } else {
+            // fallback: collect inline style contents
+            appCssText = Array.from(document.querySelectorAll('style')).map(s => s.textContent).join('\n');
+          }
+        } catch (e) {
+          // ignore and fallback to inline styles
+          appCssText = '';
+        }
+
         previewDocument.open();
         previewDocument.write(`
           <!DOCTYPE html>
           <html>
             <head>
+              ${appCssHref ? `<link rel="stylesheet" href="${appCssHref}">` : `<style>${appCssText}</style>`}
               <style>${css}</style>
             </head>
             <body>
               ${html}
-              <script>${js}</script>
+              <script>${js}<'/'+'script>'}
             </body>
           </html>
         `);
         previewDocument.close();
 
+        // Still append the interface.css and paged polyfill for preview fidelity
         var cssLink = document.createElement('link');
         cssLink.href = '/assets/styles/interface.css'; 
         cssLink.rel = 'stylesheet'; 
@@ -100,13 +122,27 @@ const CodeEditor = () => {
         var jsLink = document.createElement('script');
         jsLink.src = '/assets/scripts/paged.polyfill.js'; 
 
-        previewDocument.head.appendChild(cssLink);
+        // avoid duplicating the same link
+        try {
+          if (!previewDocument.querySelector(`link[href="${cssLink.href}"]`)) {
+            previewDocument.head.appendChild(cssLink);
+          }
+        } catch (e) {
+          // ignore
+          previewDocument.head.appendChild(cssLink);
+        }
+
         previewDocument.head.appendChild(jsLink);
       }, 0);
     }
   };
 
   const fetchSupportedTools = async () => {
+    if (!backendUrl) {
+      console.warn('No backend URL configured (VITE_PRINTCSS_BACKEND_URL). Skipping supported tools fetch.');
+      return;
+    }
+
     try {
       const response = await axios.get(`${backendUrl}/supported_tools`);
       setTools(response.data);
@@ -203,7 +239,7 @@ const CodeEditor = () => {
   };
 
   const renderEditor = (type, value, setValue) => (
-    <div class={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
+    <div className={`flex-1 ${activeTab !== type ? 'hidden' : ''}`}>
       <Editor
         height="100%"
         defaultLanguage={type}
@@ -216,40 +252,40 @@ const CodeEditor = () => {
   );
 
   const editorSection = (
-    <div class={`flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-800' : 'w-1/2'}`}>
-      <div class="flex bg-gray-700 items-center">
+    <div className={`flex flex-col ${isFullscreen ? 'fixed inset-0 z-50 bg-gray-800' : 'w-1/2'}`}>
+      <div className="flex bg-gray-700 items-center">
         {['html', 'css', 'javascript'].map(tab => (
           <button
             key={tab}
-            class={`px-4 py-2 ${activeTab === tab ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+            className={`px-4 py-2 ${activeTab === tab ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
             onClick={() => setActiveTab(tab)}
           >
             {tab.toUpperCase()}
           </button>
         ))}
-        <div class="ml-auto flex items-center">
+        <div className="ml-auto flex items-center">
           <button 
             onClick={downloadJson} 
-            class="p-2"
+            className="p-2"
             title="Download JSON"
           >
-            <i class="bi bi-download"></i>
+            <i className="bi bi-download"></i>
           </button>
-          <label class="p-2 cursor-pointer" title="Import JSON">
+          <label className="p-2 cursor-pointer" title="Import JSON">
             <input
               type="file"
               accept=".json"
               onChange={importJson}
               style={{ display: 'none' }}
             />
-            <i class="bi bi-upload"></i>
+            <i className="bi bi-upload"></i>
           </label>
           <button 
             onClick={toggleFullscreen} 
-            class="p-2"
+            className="p-2"
             title="Toggle Fullscreen"
           >
-            <i class={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
+            <i className={`bi ${isFullscreen ? 'bi-fullscreen-exit' : 'bi-fullscreen'}`}></i>
           </button>
         </div>
       </div>
@@ -260,23 +296,23 @@ const CodeEditor = () => {
   );
 
   return (
-    <div class="flex flex-col h-screen bg-gray-800 text-white">
-      <div class="flex-1 flex">
+    <div className="flex flex-col h-screen bg-gray-800 text-white">
+      <div className="flex-1 flex">
         {editorSection}
         {!isFullscreen && (
-          <div class="w-1/2 flex flex-col">
-            <div class="flex bg-gray-700 items-center justify-between px-4">
+          <div className="w-1/2 flex flex-col">
+            <div className="flex bg-gray-700 items-center justify-between px-4">
               <div>          
                 <button
                     key="preview"
-                    class={`px-4 py-2 ${activeRenderingTab === 'preview' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    className={`px-4 py-2 ${activeRenderingTab === 'preview' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
                     onClick={() => setActiveRenderingTab('preview')}
                 >
                     Preview
                 </button>
                 <button
                     key="pdf"
-                    class={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
+                    className={`px-4 py-2 ${activeRenderingTab === 'pdf' ? 'bg-gray-600' : 'bg-gray-700'} text-white`}
                     onClick={() => {
                         setActiveRenderingTab('pdf');
                         generatePdf();
@@ -288,7 +324,7 @@ const CodeEditor = () => {
                     <select
                     value={selectedTool}
                     onChange={(e) => setSelectedTool(e.target.value)}
-                    class="ml-2 p-1 bg-gray-600 text-white rounded"
+                    className="ml-2 p-1 bg-gray-600 text-white rounded"
                     >
                     {tools.map(tool => (
                         <option key={tool} value={tool}>
@@ -298,30 +334,30 @@ const CodeEditor = () => {
                     </select>
                 )}
               </div>
-              <button class="reload p-1" onClick={reload}>
-                <i class="bi bi-arrow-clockwise"></i> Reload
+              <button className="reload p-1" onClick={reload}>
+                <i className="bi bi-arrow-clockwise"></i> Reload
               </button>
             </div>
-            <div class="flex-1 p-4">
+            <div className="flex-1 p-4">
               {activeRenderingTab === 'preview' && (
                 <iframe
                   ref={previewRef}
                   title="preview"
-                  class="w-full h-full bg-white border-none"
+                  className="w-full h-full bg-white border-none"
                 />
               )}
               {activeRenderingTab === 'pdf' && (
                 <>
                     {isLoading ? (
-                        <div class="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
-                            <div class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
-                            <p class="text-white text-xl font-semibold">Rendering PDF...</p>
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
+                            <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
+                            <p className="text-white text-xl font-semibold">Rendering PDF...</p>
                         </div>
                     ) : pdfUrl ? (
                         <iframe
                             src={pdfUrl}
                             title="pdf-viewer"
-                            class="w-full h-full bg-white border-none"
+                            className="w-full h-full bg-white border-none"
                         />
                     ) : null}
                 </>

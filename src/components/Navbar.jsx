@@ -1,7 +1,6 @@
 import {useState} from 'react'
 import { Link } from 'react-router-dom'
 
-// Vite exposes env vars on import.meta.env and requires VITE_ prefix for client-side use
 const imprintHtml = import.meta.env.VITE_IMPRINT_HTML || ''
 const privacyHtml = import.meta.env.VITE_PRIVACY_HTML || ''
 
@@ -9,7 +8,7 @@ const HtmlModal = ({ show, handleClose, htmlText }) => {
     if (!show) return null;
 
     return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center">
+    <div className="fixed inset-0 bg-black/50 z-40 flex justify-center items-center">
       <div className="bg-white p-4 rounded shadow-md w-1/3">
         <div dangerouslySetInnerHTML={{ __html: htmlText.replace(/\r/g, '') }} className="max-h-80 overflow-auto" />
         <div className="mt-4 flex justify-end">

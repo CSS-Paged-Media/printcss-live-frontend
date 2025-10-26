@@ -8,7 +8,7 @@ const ErrorModal = ({ show, handleClose, error }) => {
     if (!show) return null;
 
     return (
-      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+      <div className="fixed inset-0 bg-black/50 flex justify-center items-center">
           <div className="bg-white p-4 rounded shadow-md w-1/3">
             <h2 className="text-lg font-bold text-red-600">Error {error.status}</h2>
             <p>{error.message}</p>
@@ -42,7 +42,6 @@ const CodeEditor = () => {
   const [showErrorModal, setShowErrorModal] = useState(false);
   const [errorDetails, setErrorDetails] = useState({ status: '', message: '', data: '' });
   
-  // Vite uses import.meta.env and env vars must be prefixed with VITE_
   const backendUrl = import.meta.env.VITE_PRINTCSS_BACKEND_URL || '';
 
   useEffect(() => {
@@ -349,7 +348,7 @@ const CodeEditor = () => {
               {activeRenderingTab === 'pdf' && (
                 <>
                     {isLoading ? (
-                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800 bg-opacity-50">
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-800/50">
                             <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-white mb-4"></div>
                             <p className="text-white text-xl font-semibold">Rendering PDF...</p>
                         </div>

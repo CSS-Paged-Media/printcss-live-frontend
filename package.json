@@ -4,11 +4,11 @@
   "private": true,
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
-    "axios": "^1.14.0",
+    "axios": "^1.20.0",
     "bootstrap-icons": "^1.13.1",
-    "react": "^19.2.4",
+    "react": "^19.2.7",
     "react-dom": "^19.2.0",
-    "react-router-dom": "^7.14.0",
+    "react-router-dom": "^7.18.2",
     "web-vitals": "^5.1.0"
   },
   "scripts": {
@@ -19,9 +19,9 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.17",
     "@vitejs/plugin-react": "^6.0.1",
-    "autoprefixer": "^10.5.0",
-    "postcss": "^8.5.8",
+    "autoprefixer": "^10.4.21",
+    "postcss": "^8.5.25",
     "tailwindcss": "^4.1.17",
-    "vite": "^8.0.6"
+    "vite": "^8.3.8"
   }
 }
